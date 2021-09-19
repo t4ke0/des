@@ -10,5 +10,27 @@ decryption algorithm in the future.
 
 ```console
 $ go build
-$ ./des
+$ ./des -msg <your message here> 
 ```
+
+providing a hex encryption key is optional, because the program can already
+generate encryption key and it will be logged in the stdout.
+
+```console
+$ go build
+$ ./des -msg <message here> -key <hex decimal key here>
+```
+
+
+
+### References
+
+- https://paginas.fe.up.pt/~ei10109/ca/des.html
+
+
+
+### Todo
+
+- [X] encryption
+
+- [ ] decryption
