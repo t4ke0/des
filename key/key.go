@@ -46,7 +46,7 @@ func generateInitalKey() (k DesHexKey) {
 		k += DesHexKey(h)
 		count++
 	}
-
+	log.Printf("debug init hex key %v", k)
 	return
 }
 
@@ -97,10 +97,14 @@ func (dbk DesBinKey) SetPermutedChoiceONE() (key DesBinKey) {
 	return
 }
 
+// String
+func (dbk DesBinKey) String() string {
+	return string(dbk)
+}
+
 var shiftTimes = 16
 
 func (dbk DesBinKey) SplitAndShift() []DesBinKey {
-	log.Printf("%v", len(dbk))
 	s1 := dbk[len(dbk)/2:]
 	s2 := dbk[:len(dbk)/2]
 
@@ -137,14 +141,24 @@ func (dbk DesBinKey) SetPermutedChoiceTWO() (key DesBinKey) {
 }
 
 // DesGenKeys generates DES keys. by providing the number of keys you want.
-func DesGenKeys(num int) ([]DesBinKey, error) {
+func DesGenKeys(initKey DesHexKey, num int) ([]DesBinKey, error) {
 	shiftTimes = num
-	key, err := generateInitalKey().Binary()
-	if err != nil {
-		return []DesBinKey{}, err
+	var binKey DesBinKey
+	if initKey == "" {
+		key, err := generateInitalKey().Binary()
+		if err != nil {
+			return []DesBinKey{}, err
+		}
+		binKey = key
+	} else {
+		var err error
+		binKey, err = initKey.Binary()
+		if err != nil {
+			return []DesBinKey{}, err
+		}
 	}
 	var keys []DesBinKey
-	for _, n := range key.SetPermutedChoiceONE().SplitAndShift() {
+	for _, n := range binKey.SetPermutedChoiceONE().SplitAndShift() {
 		keys = append(keys, n.SetPermutedChoiceTWO())
 	}
 	return keys, nil
